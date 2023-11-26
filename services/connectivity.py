@@ -1,19 +1,25 @@
+from enum import StrEnum
+
 import urllib3
 from Cameras.settings import WINDY_KEY
 from custom_exceptions.windy_api import ResponseException, AuthorizationException
-
+from bs4 import BeautifulSoup
 
 WINDY_API_URL = 'https://api.windy.com'
-
-
 __http = urllib3.PoolManager(headers={'X-WINDY-API-KEY': WINDY_KEY})
 
 
+class WebcamLifecyclePeriod(StrEnum):
+    LIVE = 'live'
+    DAY = 'day'
+    MONTH = 'month'
+    YEAR = 'year'
+    LIFETIME = 'lifetime'
+
+
 def authorize():
-    response = __http.request('GET', WINDY_API_URL+'/webcams/api/v3/webcams')
-    if response.status == 200:
-        return
-    elif response.status == 401:
+    response = __http.request('GET', WINDY_API_URL + '/webcams/api/v3/webcams')
+    if response.status == 401:
         raise AuthorizationException('Authorization failed')
     elif response.status >= 400:
         raise ResponseException('Client side error')
@@ -22,15 +28,60 @@ def authorize():
 
 
 def get_full_webcam_schema(webcam_id):
-    url = WebcamSchemeURLBuilder()\
-        .add_urls()\
-        .add_location()\
-        .add_player()\
-        .add_images()\
-        .add_categories()\
+    url = WebcamSchemeURLBuilder() \
+        .add_urls() \
+        .add_location() \
+        .add_player() \
+        .add_images() \
+        .add_categories() \
         .create(webcam_id)
     response = __http.request('GET', url)
+    if response.status == 401:
+        raise AuthorizationException('Authorization failed')
+    elif response.status >= 400:
+        raise ResponseException('Client side error')
+    elif response.status >= 500:
+        raise ResponseException('Server side error')
+
     return response.json()
+
+
+def get_player_url(webcam_scheme: dict, time_period: WebcamLifecyclePeriod = WebcamLifecyclePeriod.DAY):
+    return webcam_scheme["player"][time_period.value]
+
+
+def get_player_html(url: str) -> str:
+    response = __http.request('GET', url)
+    if response.status == 401:
+        raise AuthorizationException('Authorization failed')
+    elif response.status >= 400:
+        raise ResponseException('Client side error')
+    elif response.status >= 500:
+        raise ResponseException('Server side error')
+    return response.data.decode('utf-8')
+
+
+def get_player_images_urls(html: str) -> list[str]:
+    parsed_html = BeautifulSoup(html)
+    raw_urls_str = parsed_html.find('script').text.split('full: [')[1].split(']')[0]
+    raw_urls_phase1 = raw_urls_str.split("'")  # ['', '\'url\'', ', ' 'url', ', ', 'url', '']
+    urls = []
+    step = 2  # urls are always at odd indexes
+    first_url_index = 1
+    for i in range(first_url_index, len(raw_urls_phase1), step):
+        urls.append(raw_urls_phase1[i].strip("'"))
+    return urls
+
+
+def get_image(url: str) -> bytes:
+    response = __http.request('GET', url)
+    if response.status == 401:
+        raise AuthorizationException('Authorization failed')
+    elif response.status >= 400:
+        raise ResponseException('Client side error')
+    elif response.status >= 500:
+        raise ResponseException('Server side error')
+    return response.data
 
 
 class WebcamSchemeURLBuilder:

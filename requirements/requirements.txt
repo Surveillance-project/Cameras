@@ -6,6 +6,8 @@
 #
 asgiref==3.7.2
     # via django
+beautifulsoup4==4.12.2
+    # via -r .\requirements\requirements.ini
 django==4.2.7
     # via
     #   -r .\requirements\requirements.ini
@@ -20,6 +22,8 @@ pytz==2023.3.post1
     # via djangorestframework
 redis==5.0.1
     # via -r .\requirements\requirements.ini
+soupsieve==2.5
+    # via beautifulsoup4
 sqlparse==0.4.4
     # via django
 tzdata==2023.3
