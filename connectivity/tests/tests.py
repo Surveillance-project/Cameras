@@ -1,1 +1,1 @@
-import test_windy_requests
+import connectivity.tests.test_windy_requests

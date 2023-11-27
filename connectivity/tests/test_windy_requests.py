@@ -1,31 +1,28 @@
 from unittest.case import TestCase as UnitCase
-from services.connectivity import (
-    authorize,
-    get_full_webcam_schema,
-    get_player_url,
-    WebcamLifecyclePeriod,
-    get_player_html,
-    get_player_images_urls
-)
+from services.connectivity import WindyApi, WebcamLifecyclePeriod
 
 
 class AuthorizesTest(UnitCase):
+    def setUp(self):
+        self.api = WindyApi()
 
     def test_authorization(self):
-        authorize()
+        self.api.authorize()
 
 
 class GetWebcamSchemeTest(UnitCase):
     def setUp(self):
         self.webcam_id = 1179853135
+        self.api = WindyApi()
 
     def test_get_full_scheme(self):
-        get_full_webcam_schema(self.webcam_id)
+        self.api.get_camera(self.webcam_id)
 
 
 class GetPlayerUrlTest(UnitCase):
 
     def setUp(self):
+        self.api = WindyApi()
         self.webcam_scheme = {
             "title": "Sydney: Sydney Harbour Bridge - Sydney Opera House",
             "viewCount": 1387607,
@@ -42,30 +39,32 @@ class GetPlayerUrlTest(UnitCase):
         }
 
     def test_get_player_for_day_url(self):
-        get_player_url(self.webcam_scheme)
+        self.api.get_player_url(self.webcam_scheme)
 
     def test_get_player_for_live_url(self):
-        get_player_url(self.webcam_scheme, WebcamLifecyclePeriod.LIVE)
+        self.api.get_player_url(self.webcam_scheme, WebcamLifecyclePeriod.LIVE)
 
     def test_get_player_for_month_url(self):
-        get_player_url(self.webcam_scheme, WebcamLifecyclePeriod.MONTH)
+        self.api.get_player_url(self.webcam_scheme, WebcamLifecyclePeriod.MONTH)
 
     def test_get_player_for_year_url(self):
-        get_player_url(self.webcam_scheme, WebcamLifecyclePeriod.YEAR)
+        self.api.get_player_url(self.webcam_scheme, WebcamLifecyclePeriod.YEAR)
 
 
 class GetPlayerHTMLTest(UnitCase):
 
     def setUp(self):
+        self.api = WindyApi()
         self.player_for_day_url = "https://webcams.windy.com/webcams/public/embed/player/1179853135/day"
 
     def test_return_html(self):
-        html_string = get_player_html(self.player_for_day_url)
+        html_string = self.api.get_player_html(self.player_for_day_url)
         self.assertTrue(html_string.strip().strip('\n').startswith("<!doctype html>"))
 
 
 class GetPlayerImagesUrlsTest(UnitCase):
     def setUp(self):
+        self.api = WindyApi()
         self.html = '''
         
 
@@ -203,5 +202,15 @@ class GetPlayerImagesUrlsTest(UnitCase):
         '''
 
     def test_get_images_urls(self):
-        urls = get_player_images_urls(self.html)
+        urls = self.api.get_player_images_urls(self.html)
         self.assertIsInstance(urls, list)
+
+
+class GetImagesPipelineTest(UnitCase):
+    def setUp(self):
+        self.webcam_id = 1179853135
+        self.api = WindyApi()
+
+    def test_download_images(self):
+        images = self.api.get_images(self.webcam_id, WebcamLifecyclePeriod.DAY)
+        self.assertIsNot(bool(images), False)
