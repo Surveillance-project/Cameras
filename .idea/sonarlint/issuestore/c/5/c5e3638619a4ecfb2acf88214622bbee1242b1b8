@@ -1,4 +1,2 @@
 
-vpython:S1192"RDefine a constant instead of duplicating this literal 'Server side error' 4 times.(€õ™½øÿÿÿÿ8¬«¦áÀ1
-vpython:S1192"RDefine a constant instead of duplicating this literal 'Client side error' 4 times.(°†óıÿÿÿÿ8¬«¦áÀ1
-ypython:S1192"UDefine a constant instead of duplicating this literal 'Authorization failed' 4 times.(‚Ø€Âÿÿÿÿÿ8¬«¦áÀ1
+„python:S5886?"`Return a value of type "list[bytes]" instead of "set" or update function "get_images" type hint.(È‚šÉùÿÿÿÿ8ïÜõ…Á1

@@ -1,3 +1,7 @@
+"""
+To be noticed: these tests are mostly api calls and will take a lot of time, if ran
+"""
+
 from unittest.case import TestCase as UnitCase
 from services.connectivity import WindyApi, WebcamLifecyclePeriod
 
@@ -17,6 +21,11 @@ class GetWebcamSchemeTest(UnitCase):
 
     def test_get_full_scheme(self):
         self.api.get_camera(self.webcam_id)
+
+    def test_get_partial_scheme_with_url(self):
+        self.api.get_camera_by_url(WindyApi.WebcamSchemeURLBuilder()
+                                   .add_images()
+                                   .create(self.webcam_id))
 
 
 class GetPlayerUrlTest(UnitCase):

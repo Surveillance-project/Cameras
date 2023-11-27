@@ -38,6 +38,10 @@ class WindyApi(WebcamImageApi):
         response = WindyApi.__http.request('GET', WindyApi.URL + '/webcams/api/v3/webcams')
         handle_error_status(response.status)
 
+    """
+    Returns full webcam schema, meaning that every additional parameter is used (Done with UrlBuilder).
+    In order to request only necessary data, use url alternative method.
+    """
     def get_camera(self, camera_id) -> dict:
         url = WindyApi.WebcamSchemeURLBuilder() \
             .add_urls() \
@@ -46,6 +50,11 @@ class WindyApi(WebcamImageApi):
             .add_images() \
             .add_categories() \
             .create(camera_id)
+        response_json = self.get_camera_by_url(url)
+
+        return response_json
+
+    def get_camera_by_url(self, url) -> dict:
         response = WindyApi.__http.request('GET', url)
         handle_error_status(response.status)
 
