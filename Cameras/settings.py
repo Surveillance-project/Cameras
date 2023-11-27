@@ -52,6 +52,16 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+REDIS_URL = config['REDIS_URL']
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": REDIS_URL,
+        "KEY_PREFIX": "cameras",
+        "TIMEOUT": 60 * 15,  # in seconds: 60 * 15 (15 minutes)
+    }
+}
+
 ROOT_URLCONF = "Cameras.urls"
 
 TEMPLATES = [
