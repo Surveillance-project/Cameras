@@ -16,6 +16,7 @@ class WebcamImageCaching(WebcamDataCaching, ABC):
 
 class WindyWebcamImageCaching(WebcamImageCaching):
     IMAGES_REFRESH_RATE = 60 * 10
+
     def cache(self, images: list[bytes], camera_id: int):
         camera_scheme = cache.get(str(camera_id))
         if camera_scheme:
