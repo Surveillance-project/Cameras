@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # SECRETS
 WINDY_KEY = config['WINDY_API_KEY']
 
+
 # Application definition
 
 INSTALLED_APPS = [

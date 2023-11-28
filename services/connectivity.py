@@ -24,7 +24,7 @@ class WebcamApi(ABC):
         pass
 
 
-class WebcamImageApi(WebcamApi):
+class WebcamImageApi(WebcamApi, ABC):
     @abstractmethod
     def get_images(self, camera_id, period):
         pass
