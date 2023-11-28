@@ -4,6 +4,9 @@ import urllib3
 from Cameras.settings import WINDY_KEY
 from bs4 import BeautifulSoup
 from helpers.responses import handle_broad_api_error_status as handle_error_status
+from caching import WebcamDataCaching, WindyWebcamImageCaching
+from custom_exceptions.caching import EmptyImageCacheException
+from custom_exceptions.windy_api import NoSuchCameraException, ResponseException
 
 
 class WebcamLifecyclePeriod(StrEnum):
@@ -38,11 +41,11 @@ class WindyApi(WebcamImageApi):
         response = WindyApi.__http.request('GET', WindyApi.URL + '/webcams/api/v3/webcams')
         handle_error_status(response.status)
 
-    """
-    Returns full webcam schema, meaning that every additional parameter is used (Done with UrlBuilder).
-    In order to request only necessary data, use url alternative method.
-    """
     def get_camera(self, camera_id) -> dict:
+        """
+        :returns: full webcam schema, meaning that every additional parameter is used (Done with UrlBuilder).
+        In order to request only necessary data, use url alternative method.
+        """
         url = WindyApi.WebcamSchemeURLBuilder() \
             .add_urls() \
             .add_location() \
@@ -56,7 +59,11 @@ class WindyApi(WebcamImageApi):
 
     def get_camera_by_url(self, url) -> dict:
         response = WindyApi.__http.request('GET', url)
-        handle_error_status(response.status)
+        try:
+            handle_error_status(response.status)
+        except ResponseException as e:
+            if e.status_code == 404:
+                raise NoSuchCameraException()
 
         return response.json()
 
@@ -129,3 +136,67 @@ class WindyApi(WebcamImageApi):
         def add_urls(self):
             self.params.add('urls')
             return self
+
+
+class WebcamDataManager(ABC):
+    """
+    Handles data retrieval strategies. Hits api, caches and retrieves the data on demand.
+    """
+    def __init__(self, api_strategy: WebcamApi, caching_strategy: WebcamDataCaching):
+        self._api = api_strategy
+        self._caching_strategy = caching_strategy
+
+    @property
+    def caching_strategy(self) -> WebcamDataCaching:
+        return self._caching_strategy
+
+    @property.setter
+    def caching_strategy(self, value):
+        self._caching_strategy = value
+
+    @property
+    def api(self) -> WebcamApi:
+        """
+        Strategy for hitting api where data is stored.
+        """
+        return self._api
+
+    @property.setter
+    def api(self, value: WebcamApi):
+        self._api = value
+
+
+class WebcamImageManager(WebcamDataManager):
+    pass
+
+
+class WindyWebcamImageManager(WebcamImageManager):
+    def __init__(self):
+        super().__init__(WindyApi(), WindyWebcamImageCaching())
+
+    @property
+    def caching_strategy(self) -> WindyWebcamImageCaching:
+        return self._caching_strategy
+
+    @property.setter
+    def caching_strategy(self, value):
+        raise SyntaxError("Assigning is restricted")
+
+    @property
+    def api(self) -> WindyApi:
+        return self._api
+
+    @property.setter
+    def api(self, value):
+        raise SyntaxError("Assigning is restricted")
+
+    def get_images(self, camera_id: int) -> list[bytes]:
+        """
+        :raises NoSuchCameraException: if attempted hitting api with not existing camera id
+        """
+        try:
+            images = self.caching_strategy.read_images(camera_id)
+        except EmptyImageCacheException:
+            images = self.api.get_images(camera_id, WebcamLifecyclePeriod.DAY)
+            self.caching_strategy.cache(images, camera_id)
+        return images

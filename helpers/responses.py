@@ -5,6 +5,6 @@ def handle_broad_api_error_status(status):
     if status == 401:
         raise AuthorizationException('Authorization failed')
     elif status >= 400:
-        raise ResponseException('Client side error')
+        raise ResponseException(status, 'Client side error')
     elif status >= 500:
-        raise ResponseException('Server side error')
+        raise ResponseException(status, 'Server side error')
