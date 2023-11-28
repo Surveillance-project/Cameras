@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from services.connectivity import WebcamApi, WebcamImageApi, WindyApi
 from django.core.cache import cache
 
 
