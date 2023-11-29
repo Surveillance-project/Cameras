@@ -32,7 +32,7 @@ class WindyWebcamImageCaching(WebcamImageCaching):
 
     """
     :raises EmptyImageCacheException: if there are now images stored
-    :raises KeyError: if the scheme exists without demanded values for strogin images
+    :raises KeyError: if the scheme exists without demanded values for storing images
     """
     def read(self, camera_id) -> list[bytes]:
         webcam_scheme = self.read_schema(camera_id)
