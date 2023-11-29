@@ -4,8 +4,8 @@ import urllib3
 from Cameras.settings import WINDY_KEY
 from bs4 import BeautifulSoup
 from helpers.responses import handle_broad_api_error_status as handle_error_status
-from .caching import WebcamDataCaching, WindyWebcamImageCaching
-from custom_exceptions.caching import EmptyImageCacheException, CameraSchemeNotInCacheException
+from .caching import WebcamDataCaching, WindyWebcamImageCaching, WindyWebcamMetaCaching
+from custom_exceptions.caching import EmptyImageCacheException, CameraSchemeNotInCacheException, MetaIsAbsentInCacheException
 from custom_exceptions.windy_api import NoSuchCameraException, ResponseException
 from logging import getLogger
 
@@ -199,7 +199,7 @@ class WindyWebcamImageManager(WebcamImageManager):
         :raises NoSuchCameraException: if attempted hitting api with not existing camera id
         """
         try:
-            images = self.caching_strategy.read_images(camera_id)
+            images = self.caching_strategy.read(camera_id)
         except (EmptyImageCacheException, CameraSchemeNotInCacheException) as e:
             logger.info(e.message)
             logger.info("Manager tried to retrieve images from cache, but none were found. Trying to hit api")
@@ -208,3 +208,50 @@ class WindyWebcamImageManager(WebcamImageManager):
             self.caching_strategy.cache(images, camera_id)
             logger.info("Successfully cached downloaded images")
         return images
+
+
+class WindyDataManager(WebcamDataManager):
+
+    @property
+    def caching_strategy(self) -> WindyWebcamMetaCaching:
+        return self._caching_strategy
+
+    @caching_strategy.setter
+    def caching_strategy(self, value):
+        raise SyntaxError("Assigning is restricted")
+
+    @property
+    def api(self) -> WindyApi:
+        return self._api
+
+    @api.setter
+    def api(self, value):
+        raise SyntaxError("Assigning is restricted")
+
+    def __init__(self):
+        super().__init__(WindyApi(), WindyWebcamMetaCaching())
+        self._image_caching_manager = WindyWebcamImageManager()
+
+    @property
+    def image_caching_manager(self) -> WindyWebcamImageManager:
+        return self._image_caching_manager
+
+    # Makes 3 retrieval calls to cache
+    def get_data(self, camera_id: int) -> dict:
+        """
+        :returns: scheme of meta info and images
+        :raises NoSuchCameraException: if attempted hitting api with not existing camera id
+        """
+        try:
+            self._image_caching_manager.get_images(camera_id)
+            self.caching_strategy.read(camera_id)
+        except MetaIsAbsentInCacheException as e:
+            logger.info(e.message)
+            logger.info("Manager tried to retrieve camera meta from cache, but none was found. Trying to hit api")
+            meta = self.api.get_camera(camera_id)
+            logger.info("Successfully downloaded camera meta from api")
+            self.caching_strategy.cache(meta, camera_id)
+            logger.info("Successfully cached downloaded camera meta")
+
+        return self.caching_strategy.read_schema(camera_id)
+
