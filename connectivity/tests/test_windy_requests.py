@@ -5,6 +5,7 @@ To be noticed: these tests are mostly api calls and will take a lot of time, if 
 from unittest.case import TestCase as UnitCase
 from services.connectivity import WindyApi, WebcamLifecyclePeriod
 from .big_constants import WINDY_PLAYER_HTML
+from custom_exceptions.windy_api import NoSuchCameraException
 
 
 class AuthorizesTest(UnitCase):
@@ -22,6 +23,9 @@ class GetWebcamSchemeTest(UnitCase):
 
     def test_get_full_scheme(self):
         self.api.get_camera(self.webcam_id)
+
+    def test_get_scheme_with_invalid_id_raises_exception(self):
+        self.assertRaises(NoSuchCameraException, self.api.get_camera, -1)
 
     def test_get_partial_scheme_with_url(self):
         self.api.get_camera_by_url(WindyApi.WebcamSchemeURLBuilder()

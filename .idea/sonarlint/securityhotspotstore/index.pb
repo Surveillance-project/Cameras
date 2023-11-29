@@ -22,3 +22,11 @@ Y
 .gitignore,a\5\a5cc2925ca8258af241be7e5b0381edf30266302
 D
 helpers/responses.py,4\6\4640be7e899f14e487a10b13aa1677d3806f0bde
+S
+#connectivity/tests/big_constants.py,a\4\a4e6f9a58c8986b43b6c2ff7eca9b0a0c44bce58
+L
+custom_exceptions/caching.py,c\b\cb5d0b00522fed7ad6fb62c24276b72da41c5426
+R
+"connectivity/tests/test_caching.py,d\f\df90d4285ab93a4716a6f71e27350d879be959c9
+C
+services/caching.py,5\2\52322a12c47f0aa8e0588a88e25d083797b16fad

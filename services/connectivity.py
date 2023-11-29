@@ -4,9 +4,13 @@ import urllib3
 from Cameras.settings import WINDY_KEY
 from bs4 import BeautifulSoup
 from helpers.responses import handle_broad_api_error_status as handle_error_status
-from caching import WebcamDataCaching, WindyWebcamImageCaching
-from custom_exceptions.caching import EmptyImageCacheException
+from .caching import WebcamDataCaching, WindyWebcamImageCaching
+from custom_exceptions.caching import EmptyImageCacheException, CameraSchemeNotInCacheException
 from custom_exceptions.windy_api import NoSuchCameraException, ResponseException
+from logging import getLogger
+
+
+logger = getLogger()
 
 
 class WebcamLifecyclePeriod(StrEnum):
@@ -72,10 +76,10 @@ class WindyApi(WebcamImageApi):
         player_url = self.get_player_url(camera_schema, period)
         player_html = self.get_player_html(player_url)
         images_urls = self.get_player_images_urls(player_html)
-        downloaded_images = set()
+        downloaded_images = list()
         for image_url in images_urls:
             image = self.get_image(image_url)
-            downloaded_images.add(image)
+            downloaded_images.append(image)
         return downloaded_images
 
     def get_player_url(self, webcam_scheme: dict, time_period: WebcamLifecyclePeriod = WebcamLifecyclePeriod.DAY):
@@ -150,7 +154,7 @@ class WebcamDataManager(ABC):
     def caching_strategy(self) -> WebcamDataCaching:
         return self._caching_strategy
 
-    @property.setter
+    @caching_strategy.setter
     def caching_strategy(self, value):
         self._caching_strategy = value
 
@@ -161,7 +165,7 @@ class WebcamDataManager(ABC):
         """
         return self._api
 
-    @property.setter
+    @api.setter
     def api(self, value: WebcamApi):
         self._api = value
 
@@ -178,7 +182,7 @@ class WindyWebcamImageManager(WebcamImageManager):
     def caching_strategy(self) -> WindyWebcamImageCaching:
         return self._caching_strategy
 
-    @property.setter
+    @caching_strategy.setter
     def caching_strategy(self, value):
         raise SyntaxError("Assigning is restricted")
 
@@ -186,7 +190,7 @@ class WindyWebcamImageManager(WebcamImageManager):
     def api(self) -> WindyApi:
         return self._api
 
-    @property.setter
+    @api.setter
     def api(self, value):
         raise SyntaxError("Assigning is restricted")
 
@@ -196,7 +200,11 @@ class WindyWebcamImageManager(WebcamImageManager):
         """
         try:
             images = self.caching_strategy.read_images(camera_id)
-        except EmptyImageCacheException:
+        except (EmptyImageCacheException, CameraSchemeNotInCacheException) as e:
+            logger.info(e.message)
+            logger.info("Manager tried to retrieve images from cache, but none were found. Trying to hit api")
             images = self.api.get_images(camera_id, WebcamLifecyclePeriod.DAY)
+            logger.info("Successfully downloaded images from api")
             self.caching_strategy.cache(images, camera_id)
+            logger.info("Successfully cached downloaded images")
         return images

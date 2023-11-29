@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from django.core.cache import cache
-from custom_exceptions.caching import EmptyImageCacheException
+from custom_exceptions.caching import EmptyImageCacheException, CameraSchemeNotInCacheException
 
 
 class WebcamDataCaching(ABC):
@@ -28,13 +28,13 @@ class WindyWebcamImageCaching(WebcamImageCaching):
         if webcam_scheme:
             return webcam_scheme
         else:
-            raise KeyError("Camera scheme is absent in cache")
+            raise CameraSchemeNotInCacheException(f"Camera (id: {camera_id}) scheme is absent in cache")
 
     """
     :raises EmptyImageCacheException: if there are now images stored
     """
     def read_images(self, camera_id) -> list[bytes]:
-        webcam_scheme = self.read()
+        webcam_scheme = self.read(camera_id)
         images: list[bytes] = webcam_scheme["images"]["raw"]
         if images:
             return images
