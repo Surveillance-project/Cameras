@@ -1,3 +1,4 @@
+import base64
 from unittest.case import TestCase as UnitCase
 from services.connectivity import WindyWebcamImageManager
 from django.core.cache import cache
@@ -25,3 +26,9 @@ class WindyImageManagerDownloadImages(UnitCase):
         # Throws exception if the scheme is invalid or absent
         cached_images = cache.get(str(self.webcam_id))["images"]["raw"]
         self.assertEquals(downloaded_images, cached_images)
+
+    def test_image_is_base64(self):
+        image_manager: WindyWebcamImageManager = self.__class__.image_manager
+        images = image_manager.get_images(self.__class__.webcam_id)
+        self.assertFalse(base64.b64encode(base64.b64decode(images[0])) == images[0])
+
