@@ -30,7 +30,7 @@ ALLOWED_HOSTS = []
 
 # SECRETS
 WINDY_KEY = config['WINDY_API_KEY']
-
+WINDY_PAGINTATION_LIMIT_LIMIT = int(config['WINDY_PAGINATION_LIMIT_LIMIT'])
 
 # Application definition
 

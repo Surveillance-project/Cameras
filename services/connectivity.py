@@ -1,7 +1,7 @@
 from enum import StrEnum
 from abc import ABC, abstractmethod
 import urllib3
-from Cameras.settings import WINDY_KEY
+from Cameras.settings import WINDY_KEY, WINDY_PAGINTATION_LIMIT_LIMIT
 from bs4 import BeautifulSoup
 from helpers.responses import handle_broad_api_error_status as handle_error_status
 from .caching import WebcamDataCaching, WindyWebcamImageCaching, WindyWebcamMetaCaching
@@ -109,6 +109,7 @@ class WindyApi(WebcamImageApi):
 
     class WebcamSchemeURLBuilder:
         def __init__(self):
+            self.limit_limit = WINDY_PAGINTATION_LIMIT_LIMIT
             self.reset()
 
         def reset(self):
@@ -125,6 +126,20 @@ class WindyApi(WebcamImageApi):
         def add_categories(self):
             self.params.add('categories')
             return self
+
+        def add_limit(self, limit: int):
+            if type(limit) is not int:
+                raise ValueError('Limit should be of int type')
+            if not (0 <= limit <= self.limit_limit):
+                raise ValueError(f"Limit value needs to be between 0 and {self.limit_limit}")
+            self.params.add(f'limit={limit}')
+
+        def add_offset(self, offset: int):
+            if type(offset) is not int:
+                raise ValueError('Limit should be of int type')
+            if offset < 0:
+                raise ValueError(f"Limit value needs to be a positive number")
+            self.params.add(f'offset={offset}')
 
         def add_images(self):
             self.params.add('images')
