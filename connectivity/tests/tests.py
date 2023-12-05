@@ -1,1 +1,4 @@
-import test_windy_requests
+import connectivity.tests.test_windy_requests
+import connectivity.tests.test_caching
+import connectivity.tests.test_image_manager
+import connectivity.tests.test_data_manager

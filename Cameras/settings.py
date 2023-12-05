@@ -30,6 +30,7 @@ ALLOWED_HOSTS = []
 
 # SECRETS
 WINDY_KEY = config['WINDY_API_KEY']
+WINDY_PAGINTATION_LIMIT_LIMIT = int(config['WINDY_PAGINATION_LIMIT_LIMIT'])
 
 # Application definition
 
@@ -51,6 +52,16 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+REDIS_URL = config['REDIS_URL']
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": REDIS_URL,
+        "KEY_PREFIX": "cameras",
+        "TIMEOUT": 60 * 15,  # in seconds: 60 * 15 (15 minutes)
+    }
+}
 
 ROOT_URLCONF = "Cameras.urls"
 
