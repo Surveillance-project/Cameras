@@ -27,7 +27,7 @@ class WindyImageManagerDownloadImages(UnitCase):
         cached_images = cache.get(str(self.webcam_id))["images"]["raw"]
         self.assertEquals(downloaded_images, cached_images)
 
-    def test_image_is_base64(self):
+    def test_image_is_not_base64(self):
         image_manager: WindyWebcamImageManager = self.__class__.image_manager
         images = image_manager.get_images(self.__class__.webcam_id)
         self.assertFalse(base64.b64encode(base64.b64decode(images[0])) == images[0])
