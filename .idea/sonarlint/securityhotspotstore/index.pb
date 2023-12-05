@@ -30,3 +30,7 @@ R
 "connectivity/tests/test_caching.py,d\f\df90d4285ab93a4716a6f71e27350d879be959c9
 C
 services/caching.py,5\2\52322a12c47f0aa8e0588a88e25d083797b16fad
+W
+'connectivity/tests/test_data_manager.py,5\e\5e29834ccbabcdd4987f271db3b01ce1037ac1f2
+F
+connectivity/models.py,1\9\1937017e330d0f81f817d710dd419c5bab9c506c
