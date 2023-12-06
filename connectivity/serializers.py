@@ -9,7 +9,7 @@ class CategorySerializer(serializers.Serializer):
 
 
 class ImagePlayerSerializer(serializers.Serializer):
-    images = Base64ImageField(many=True)
+    images = serializers.ListField(child=Base64ImageField())
 
 
 class LocationSerializer(serializers.Serializer):
@@ -27,7 +27,7 @@ class CameraSerializer(serializers.Serializer):
     player = ImagePlayerSerializer(required=False)
 
 
-class ClusterMetaSerializer(serializers):
+class ClusterMetaSerializer(serializers.Serializer):
     class Meta:
         model = CameraCluster
         fields = '__all__'
