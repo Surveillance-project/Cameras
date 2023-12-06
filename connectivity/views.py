@@ -15,7 +15,7 @@ class DistrictListView(APIView):
             for district in districts:
                 camera_cluster = CameraCluster.objects.get(district=district)
                 cameras_count = Camera.objects.filter(camera_cluster=camera_cluster).count()
-                districts_list = districts_data['districts'].append({
+                districts_data['districts'].append({
                     'id': district.id,
                     'name': district.name,
                     'cameras_count': cameras_count
