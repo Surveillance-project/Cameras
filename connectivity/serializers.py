@@ -36,3 +36,13 @@ class ClusterMetaSerializer(serializers):
 class CameraClusterSerializer(serializers.ModelSerializer):
     cameras = CameraSerializer(many=True)
     cluster_meta = ClusterMetaSerializer()
+
+
+class DistrictSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+    cameras_count = serializers.IntegerField(required=False)
+
+
+class DistrictListSerializer(serializers.Serializer):
+    districts = DistrictSerializer(many=True)

@@ -27,7 +27,7 @@ class Street(models.Model):
 
 
 class CameraCluster(models.Model):
-    name = models.CharField(max_length=80)
+    name = models.CharField(max_length=80, null=True)
     district = models.OneToOneField("District", on_delete=models.CASCADE)
 
     def save(self, *args, **kwargs):
@@ -39,4 +39,5 @@ class CameraCluster(models.Model):
 class Camera(models.Model):
     # Camera id from producer service
     camera_id = models.BigIntegerField(unique=True)
+    camera_cluster = models.ForeignKey(CameraCluster, on_delete=models.CASCADE)
     clearance_level = models.IntegerField(default=1)
