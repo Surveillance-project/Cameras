@@ -89,9 +89,13 @@ WSGI_APPLICATION = "Cameras.wsgi.application"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': f'{config["DB_NAME"]}',
+        'USER': f'{config["DB_USER"]}',
+        'PASSWORD': f'{config["DB_PASSWORD"]}',
+        'HOST': f'{config["DB_HOST"]}',
+        'PORT': f'{config["DB_PORT"]}',
     }
 }
 
