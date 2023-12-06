@@ -1,5 +1,3 @@
-import uuid
-
 from django.db import models
 
 
@@ -29,8 +27,13 @@ class Street(models.Model):
 
 
 class CameraCluster(models.Model):
-    name = models.CharField(max_length=80, default=f"cluster_{CameraCluster.id}")
+    name = models.CharField(max_length=80)
     district = models.OneToOneField("District", on_delete=models.CASCADE)
+
+    def save(self, *args, **kwargs):
+        if not self.name:
+            self.name = f"cluster_{self.id}"
+        super().save(*args, **kwargs)
 
 
 class Camera(models.Model):

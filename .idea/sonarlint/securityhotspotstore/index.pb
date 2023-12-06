@@ -34,3 +34,9 @@ W
 'connectivity/tests/test_data_manager.py,5\e\5e29834ccbabcdd4987f271db3b01ce1037ac1f2
 F
 connectivity/models.py,1\9\1937017e330d0f81f817d710dd419c5bab9c506c
+M
+custom_exceptions/__init__.py,c\c\cc45b7b767927b25c0ead420f1befa70ea58ddc4
+K
+connectivity/serializers.py,4\e\4eac2520d263a7c444a11b998240a9553a9f9813
+X
+(connectivity/tests/test_image_manager.py,b\c\bc27106887d5ed1224e10574abd62c9f6f3f4f0f
