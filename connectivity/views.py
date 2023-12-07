@@ -9,7 +9,7 @@ from .models import District, CameraCluster, Camera
 class DistrictListView(APIView):
 
     def get(self, request, city: str):
-        districts = District.objects.filter(city__name=city)
+        districts = District.objects.filter(city__name__iexact=city)
         districts_data = {'districts': []}
         if bool(districts):
             for district in districts:

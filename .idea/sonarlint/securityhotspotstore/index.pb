@@ -40,3 +40,9 @@ K
 connectivity/serializers.py,4\e\4eac2520d263a7c444a11b998240a9553a9f9813
 X
 (connectivity/tests/test_image_manager.py,b\c\bc27106887d5ed1224e10574abd62c9f6f3f4f0f
+D
+connectivity/urls.py,2\6\26e8f33379bf442273e411e98f4f4e58778526a6
+?
+Cameras/urls.py,e\3\e35e24d277b2956f010d57842ba12e7da95c67a9
+E
+connectivity/admin.py,4\8\48358b9cd051cb413933a101366eecf4cc011465
