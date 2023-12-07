@@ -16,7 +16,7 @@ class LocationSerializer(serializers.Serializer):
     country = serializers.CharField()
     city = serializers.CharField()
     district = serializers.CharField()
-    street = serializers.CharField()
+    street = serializers.CharField(required=False)
 
 
 class CameraSerializer(serializers.Serializer):
@@ -27,20 +27,31 @@ class CameraSerializer(serializers.Serializer):
     player = ImagePlayerSerializer(required=False)
 
 
-class ClusterMetaSerializer(serializers.Serializer):
+class ClusterMetaSerializer(serializers.ModelSerializer):
+    district_name = serializers.SerializerMethodField()
+
+    def get_district_name(self, obj):
+        return obj.district.name
+
     class Meta:
         model = CameraCluster
         fields = '__all__'
 
 
-class CameraClusterSerializer(serializers.ModelSerializer):
+class CameraClusterSerializer(serializers.Serializer):
     cameras = CameraSerializer(many=True)
     cluster_meta = ClusterMetaSerializer()
+
+
+class ClusterNotVerboseForDistrict(serializers.Serializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField()
 
 
 class DistrictSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     name = serializers.CharField()
+    cluster_meta = ClusterNotVerboseForDistrict(required=False)
     cameras_count = serializers.IntegerField(required=False)
 
 
