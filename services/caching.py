@@ -52,7 +52,7 @@ class WindyWebcamImageCaching(WebcamImageCaching):
             for image in images:
                 image_base64 = base64.b64encode(image)
                 images_base64.append(image_base64)
-            images = image_base64
+            images = images_base64
         try:
             camera_scheme = self.read_schema(camera_id)
         except CameraSchemeNotInCacheException as e:
