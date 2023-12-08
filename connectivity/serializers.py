@@ -57,3 +57,8 @@ class DistrictSerializer(serializers.Serializer):
 
 class DistrictListSerializer(serializers.Serializer):
     districts = DistrictSerializer(many=True)
+
+
+class ClusterWithLocationSerializer(serializers.Serializer):
+    cluster_meta = ClusterNotVerboseForDistrict()
+    location = LocationSerializer()

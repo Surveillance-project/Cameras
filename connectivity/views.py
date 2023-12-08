@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import DistrictListSerializer, CameraClusterSerializer, ClusterMetaSerializer
+from .serializers import DistrictListSerializer, CameraClusterSerializer, ClusterMetaSerializer, ClusterWithLocationSerializer
 from .models import District, CameraCluster, Camera, Country, City, Street
 from logging import getLogger
 from services.connectivity import WindyApi, WindyDataManager
@@ -94,3 +94,26 @@ class ClusterView(APIView):
             cameras_list.append(camera_dict)
         serializer = CameraClusterSerializer(data=data_dict)
         return Response(data=serializer.initial_data)
+
+
+class ListClustersWithLocationView(APIView):
+
+    def get(self, request):
+        clusters = CameraCluster.objects.values('id', 'name', 'district__name', 'district__city__name',
+                                                'district__city__country__name')
+
+        clusters_formatted = []
+        for cluster in clusters:
+            clusters_formatted.append({
+                "cluster_meta": {
+                    "id": cluster['id'],
+                    "name": cluster['name']},
+                "location": {
+                    "country": cluster['district__city__country__name'],
+                    "city": cluster['district__city__name'],
+                    "district": cluster['district__name']
+                },
+            })
+        serializer = ClusterWithLocationSerializer(data=clusters_formatted, many=True)
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.validated_data)
