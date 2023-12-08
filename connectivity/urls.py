@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import DistrictListView, ClusterView, ListClustersWithLocationView
+from .views import DistrictListView, ClusterView, ListClustersWithLocationView, CameraView
 
 
 urlpatterns = [
@@ -7,4 +7,5 @@ urlpatterns = [
     path("v1/clusters/<int:id>", ClusterView.as_view(), name="cluster"),
     path("v1/clusters", ListClustersWithLocationView.as_view(), name="cluster_list"),
     path("v1/clusters/<str:camera_cluster_name>", ClusterView.as_view(), name="cluster_by_name"),
+    path("v1/cameras/<int:pk>", CameraView.as_view(), name="camera"),
 ]

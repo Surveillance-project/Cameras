@@ -117,3 +117,25 @@ class ListClustersWithLocationView(APIView):
         serializer = ClusterWithLocationSerializer(data=clusters_formatted, many=True)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.validated_data)
+
+
+class CameraView(APIView):
+    def get(self, request, pk: int):
+        try:
+            camera = Camera.objects.get(id=pk)
+        except Camera.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        windy_data_manager = WindyDataManager(with_base64=True)
+        try:
+            camera_scheme_with_images = windy_data_manager.get_data(camera.camera_id)
+        except NoSuchCameraException as e:
+            logger.exception("Database record keeps nonexistent api webcam id")
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        camera_dict = {
+            "id": camera.id,
+            "camera_cluster_id": camera.camera_cluster.id,
+            "clearance_level": camera.clearance_level,
+            "camera_scheme": camera_scheme_with_images
+        }
+        return Response(camera_dict)

@@ -191,8 +191,8 @@ class WebcamImageManager(WebcamDataManager):
 
 
 class WindyWebcamImageManager(WebcamImageManager):
-    def __init__(self):
-        super().__init__(WindyApi(), WindyWebcamImageCaching())
+    def __init__(self, with_base64: bool = False):
+        super().__init__(WindyApi(), WindyWebcamImageCaching(with_base64))
 
     @property
     def caching_strategy(self) -> WindyWebcamImageCaching:
@@ -244,9 +244,9 @@ class WindyDataManager(WebcamDataManager):
     def api(self, value):
         raise SyntaxError("Assigning is restricted")
 
-    def __init__(self):
+    def __init__(self, with_base64=False):
         super().__init__(WindyApi(), WindyWebcamMetaCaching())
-        self._image_caching_manager = WindyWebcamImageManager()
+        self._image_caching_manager = WindyWebcamImageManager(with_base64)
 
     @property
     def image_caching_manager(self) -> WindyWebcamImageManager:
