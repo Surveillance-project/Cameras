@@ -8,6 +8,9 @@ models_to_register = [
     models.City,
     models.Country,
     models.Street,
+    models.Profile,
+    models.CriminalRecord,
+    models.CriminalCode,
 ]
 
 for model in models_to_register:

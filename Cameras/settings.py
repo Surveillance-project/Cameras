@@ -26,6 +26,8 @@ SECRET_KEY = config['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+CRIMINAL_RETRIEVAL_CHANCE_FOR_DEBUG = 1 if DEBUG else None
+
 ALLOWED_HOSTS = []
 
 # SECRETS

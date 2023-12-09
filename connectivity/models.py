@@ -59,3 +59,30 @@ class Camera(models.Model):
     def __str__(self):
         return (f"({self.id}) {self.camera_id} | clearance: {self.clearance_level}" +
                 f" | {self.camera_cluster.name}")
+
+
+class Profile(models.Model):
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    birth_date = models.DateField()
+    place_of_residence = models.CharField(max_length=255, null=True)
+
+    def __str__(self):
+        return f"({self.id}) {self.first_name} {self.last_name}"
+
+
+class CriminalCode(models.Model):
+    code = models.CharField()
+    name = models.CharField(max_length=255, null=True)
+
+    def __str__(self):
+        return f"({self.id}) {self.code}| {self.name}"
+
+
+class CriminalRecord(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    criminal_code_record = models.ForeignKey(CriminalCode, on_delete=models.CASCADE)
+    description = models.CharField(max_length=1000, null=True)
+
+    def __str__(self):
+        return f"({self.id}) {self.criminal_code_record.code} {self.profile.first_name} {self.profile.last_name}"

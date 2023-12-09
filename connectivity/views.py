@@ -1,11 +1,16 @@
+import django.db.models
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import DistrictListSerializer, CameraClusterSerializer, ClusterMetaSerializer, ClusterWithLocationSerializer
-from .models import District, CameraCluster, Camera, Country, City, Street
+from .models import District, CameraCluster, Camera, Country, City, Street, Profile
+from django.db.models import QuerySet
 from logging import getLogger
 from services.connectivity import WindyApi, WindyDataManager
 from custom_exceptions.windy_api import NoSuchCameraException, ResponseException
+from services.image_processing.pipelines import FakePeopleDetectionPipeline
+from helpers.json_serializers import get_profiles_and_criminal_data_dict
+from Cameras.settings import CRIMINAL_RETRIEVAL_CHANCE_FOR_DEBUG
 
 
 logger = getLogger()
@@ -139,3 +144,19 @@ class CameraView(APIView):
             "camera_scheme": camera_scheme_with_images
         }
         return Response(camera_dict)
+
+
+class ImageFilterView(APIView):
+    def get(self, request, camera_api_id: int, image_index: int):
+        if camera_api_id <= 0 or image_index <= 0:
+            logger.info(f"Client tried to filter image with invalid ids| api_id: {camera_api_id}; "
+                        f"image_index in list: {image_index}")
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        if CRIMINAL_RETRIEVAL_CHANCE_FOR_DEBUG:
+            filtering = FakePeopleDetectionPipeline(1)
+        else:
+            filtering = FakePeopleDetectionPipeline()
+        criminal_profiles: QuerySet[Profile] = filtering.run(f"{camera_api_id}:{image_index}")
+        data = get_profiles_and_criminal_data_dict(criminal_profiles)
+        return Response(data)
+
