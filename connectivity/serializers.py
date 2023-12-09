@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
-from connectivity.models import CameraCluster
+from connectivity.models import CameraCluster, Report
 
 
 class CategorySerializer(serializers.Serializer):
@@ -62,3 +62,9 @@ class DistrictListSerializer(serializers.Serializer):
 class ClusterWithLocationSerializer(serializers.Serializer):
     cluster_meta = ClusterNotVerboseForDistrict()
     location = LocationSerializer()
+
+
+class ReportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Report
+        fields = ['profile_ids', 'is_immediate', 'description', 'from_camera_id']

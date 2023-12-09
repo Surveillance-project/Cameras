@@ -2,7 +2,8 @@ import django.db.models
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import DistrictListSerializer, CameraClusterSerializer, ClusterMetaSerializer, ClusterWithLocationSerializer
+from .serializers import DistrictListSerializer, CameraClusterSerializer, ClusterMetaSerializer, \
+    ClusterWithLocationSerializer, ReportSerializer
 from .models import District, CameraCluster, Camera, Country, City, Street, Profile
 from django.db.models import QuerySet
 from logging import getLogger
@@ -160,3 +161,11 @@ class ImageFilterView(APIView):
         data = get_profiles_and_criminal_data_dict(criminal_profiles)
         return Response(data)
 
+
+class ReportView(APIView):
+    def post(self, request):
+        serializer = ReportSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST)

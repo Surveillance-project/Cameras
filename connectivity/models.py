@@ -86,3 +86,10 @@ class CriminalRecord(models.Model):
 
     def __str__(self):
         return f"({self.id}) {self.criminal_code_record.code} {self.profile.first_name} {self.profile.last_name}"
+
+
+class Report(models.Model):
+    profile_ids = models.ManyToManyField(Profile)
+    is_immediate = models.BooleanField(default=False)
+    description = models.CharField(max_length=1000)
+    from_camera_id = models.ForeignKey(Camera, on_delete=models.SET_NULL, null=True)

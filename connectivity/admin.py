@@ -11,6 +11,7 @@ models_to_register = [
     models.Profile,
     models.CriminalRecord,
     models.CriminalCode,
+    models.Report,
 ]
 
 for model in models_to_register:

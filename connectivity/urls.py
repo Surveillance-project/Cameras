@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import DistrictListView, ClusterView, ListClustersWithLocationView, CameraView, ImageFilterView
+from .views import DistrictListView, ClusterView, ListClustersWithLocationView, CameraView, ImageFilterView, ReportView
 
 
 urlpatterns = [
@@ -8,5 +8,7 @@ urlpatterns = [
     path("v1/clusters", ListClustersWithLocationView.as_view(), name="cluster_list"),
     path("v1/clusters/<str:camera_cluster_name>", ClusterView.as_view(), name="cluster_by_name"),
     path("v1/cameras/<int:pk>", CameraView.as_view(), name="camera"),
-    path("v1/filters/criminal_profiler/processed_images/<int:camera_api_id>/<int:image_index>", ImageFilterView.as_view(), name="filter_with_criminal_profiler")
+    path("v1/reports", ReportView.as_view(), name="reports"),
+    path("v1/filters/criminal_profiler/processed_images/<int:camera_api_id>/<int:image_index>",
+         ImageFilterView.as_view(), name="filter_with_criminal_profiler")
 ]
