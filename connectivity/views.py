@@ -1,4 +1,5 @@
 import django.db.models
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -18,6 +19,7 @@ logger = getLogger()
 
 
 class DistrictListView(APIView):
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, city: str):
         districts = District.objects.filter(city__name__iexact=city)
@@ -53,6 +55,8 @@ class DistrictListView(APIView):
 
 
 class ClusterView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, id:str = None, camera_cluster_name: str = None):
         if bool(id) is bool(camera_cluster_name):
             return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -103,6 +107,7 @@ class ClusterView(APIView):
 
 
 class ListClustersWithLocationView(APIView):
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         clusters = CameraCluster.objects.values('id', 'name', 'district__name', 'district__city__name',
@@ -126,6 +131,8 @@ class ListClustersWithLocationView(APIView):
 
 
 class CameraView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, pk: int):
         try:
             camera = Camera.objects.get(id=pk)
@@ -148,6 +155,8 @@ class CameraView(APIView):
 
 
 class ImageFilterView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, camera_api_id: int, image_index: int):
         if camera_api_id <= 0 or image_index <= 0:
             logger.info(f"Client tried to filter image with invalid ids| api_id: {camera_api_id}; "
@@ -163,6 +172,8 @@ class ImageFilterView(APIView):
 
 
 class ReportView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         serializer = ReportSerializer(data=request.data)
         if serializer.is_valid():
