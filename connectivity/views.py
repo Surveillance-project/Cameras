@@ -1,5 +1,5 @@
 import django.db.models
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -180,3 +180,12 @@ class ReportView(APIView):
             serializer.save()
             return Response(status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetCamerasView(APIView):
+
+    def get(self, request):
+        offset = self.request.query_params.get("offset", 0)
+        limit = self.request.query_params.get("limit", 10)
+        response = WindyApi().get_cameras(offset, limit)
+        return Response(response)

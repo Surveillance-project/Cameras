@@ -42,6 +42,11 @@ class WindyApi(WebcamImageApi):
     URL = 'https://api.windy.com'
     __http = urllib3.PoolManager(headers={'X-WINDY-API-KEY': WINDY_KEY})
 
+    def get_cameras(self, offset=0, limit=10):
+        response = WindyApi.__http.request('GET', WindyApi.URL + f'/webcams/api/v3/webcams?offset={offset}&limit={limit}')
+        handle_error_status(response.status)
+        return response.json()
+
     def authorize(self):
         response = WindyApi.__http.request('GET', WindyApi.URL + '/webcams/api/v3/webcams')
         handle_error_status(response.status)

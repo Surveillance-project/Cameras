@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import DistrictListView, ClusterView, ListClustersWithLocationView, CameraView, ImageFilterView, ReportView
+from .views import DistrictListView, ClusterView, ListClustersWithLocationView, CameraView, ImageFilterView, ReportView, GetCamerasView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -17,4 +17,5 @@ urlpatterns = [
          ImageFilterView.as_view(), name="filter_with_criminal_profiler"),
     path('v1/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('v1/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('v1/extensions/cameras', GetCamerasView.as_view(), name='get_cameras_from_api_extension'),
 ]
