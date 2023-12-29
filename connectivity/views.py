@@ -135,7 +135,7 @@ class CameraView(APIView):
 
     def get(self, request, pk: int):
         try:
-            camera = Camera.objects.get(id=pk)
+            camera = Camera.objects.get(camera_id=pk)
         except Camera.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         windy_data_manager = WindyDataManager(with_base64=True)
@@ -179,7 +179,7 @@ class ReportView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
 
 
 class GetCamerasView(APIView):
