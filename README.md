@@ -9,7 +9,7 @@ Unfortunately, the chosen windy api plan does not allow to host applications tha
 This is the reason why there are:
 
 ### Images
-![](project-meta/images/login.png)
+![](/project-meta/images/login.png)
 ![](project-meta/images/select_country.png)
 ![](project-meta/images/select_city.png)
 ![](project-meta/images/map.png)
