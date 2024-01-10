@@ -1,3 +1,4 @@
+import base64
 from abc import ABC, abstractmethod
 from django.core.cache import cache
 from custom_exceptions.caching import EmptyImageCacheException, CameraSchemeNotInCacheException, MetaIsAbsentInCacheException
@@ -30,6 +31,9 @@ class WebcamImageCaching(WebcamDataCaching, ABC):
 class WindyWebcamImageCaching(WebcamImageCaching):
     IMAGES_REFRESH_RATE = 60 * 10
 
+    def __init__(self, with_base64: bool = False):
+        self.with_base64 = with_base64
+
     """
     :raises EmptyImageCacheException: if there are now images stored
     :raises KeyError: if the scheme exists without demanded values for storing images
@@ -43,6 +47,12 @@ class WindyWebcamImageCaching(WebcamImageCaching):
             raise EmptyImageCacheException(errors=[e])
 
     def cache(self, images: list[bytes], camera_id: int):
+        if self.with_base64:
+            images_base64 = []
+            for image in images:
+                image_base64 = base64.b64encode(image)
+                images_base64.append(image_base64)
+            images = images_base64
         try:
             camera_scheme = self.read_schema(camera_id)
         except CameraSchemeNotInCacheException as e:

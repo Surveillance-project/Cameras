@@ -42,6 +42,11 @@ class WindyApi(WebcamImageApi):
     URL = 'https://api.windy.com'
     __http = urllib3.PoolManager(headers={'X-WINDY-API-KEY': WINDY_KEY})
 
+    def get_cameras(self, offset=0, limit=10):
+        response = WindyApi.__http.request('GET', WindyApi.URL + f'/webcams/api/v3/webcams?offset={offset}&limit={limit}')
+        handle_error_status(response.status)
+        return response.json()
+
     def authorize(self):
         response = WindyApi.__http.request('GET', WindyApi.URL + '/webcams/api/v3/webcams')
         handle_error_status(response.status)
@@ -191,8 +196,8 @@ class WebcamImageManager(WebcamDataManager):
 
 
 class WindyWebcamImageManager(WebcamImageManager):
-    def __init__(self):
-        super().__init__(WindyApi(), WindyWebcamImageCaching())
+    def __init__(self, with_base64: bool = False):
+        super().__init__(WindyApi(), WindyWebcamImageCaching(with_base64))
 
     @property
     def caching_strategy(self) -> WindyWebcamImageCaching:
@@ -244,9 +249,9 @@ class WindyDataManager(WebcamDataManager):
     def api(self, value):
         raise SyntaxError("Assigning is restricted")
 
-    def __init__(self):
+    def __init__(self, with_base64=False):
         super().__init__(WindyApi(), WindyWebcamMetaCaching())
-        self._image_caching_manager = WindyWebcamImageManager()
+        self._image_caching_manager = WindyWebcamImageManager(with_base64)
 
     @property
     def image_caching_manager(self) -> WindyWebcamImageManager:
