@@ -9,12 +9,12 @@ Unfortunately, the chosen windy api plan does not allow to host applications tha
 This is the reason why there are:
 
 ### Images
-![](/project-meta/images/login.png)
-![](project-meta/images/select_country.png)
-![](project-meta/images/select_city.png)
-![](project-meta/images/map.png)
-![](project-meta/images/districts_cameras.png)
-![](project-meta/images/camera_view.png)
-![](project-meta/images/perform_profiling.png)
-![](project-meta/images/profiles.png)
-![](project-meta/images/report_perform.png)
+![login](project-meta/images/login.png)
+![country](project-meta/images/select_country.png)
+![city](project-meta/images/select_city.png)
+![map](project-meta/images/map.png)
+![cameras](project-meta/images/districts_cameras.png)
+![camera](project-meta/images/camera_view.png)
+![profiling](project-meta/images/perform_profiling.png)
+![profiles](project-meta/images/profiles.png)
+![report](project-meta/images/report_perform.png)
